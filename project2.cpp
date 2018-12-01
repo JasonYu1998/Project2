@@ -38,6 +38,7 @@ void combine(stack<int> &si,queue<int> &qi,queue<int> &qc){
     while(!qi.empty()){a=qi.front();qi.pop();qc.push(a);}
 }
 void serch1(int **dist,int x,int y,int **visited,stack<int> &si){
+    cout<<" !";
     si.push(y);si.push(x);visited[x][y]=true;T++;
     if(dist[x][y]==0) return;
     else if(dist[x][y]>dist[x][y-1] && !visited[x][y-1]){serch1(dist,x,y-1,visited,si);}
@@ -51,6 +52,7 @@ void serch1(int **dist,int x,int y,int **visited,stack<int> &si){
 
 }
 void serch2(int **dist,int x,int y,int **visited,queue<int> &qi,stack<int> &sl,int b){
+    cout<<" @";
     qi.push(x);qi.push(y);visited[x][y]=true;T++;sl.push(y);sl.push(x);
     if(dist[x][y]==0) return;
     else if(b>dist[x][y-1] && !visited[x][y-1]){b--;serch2(dist,x,y-1,visited,qi,sl,b);}
@@ -147,23 +149,7 @@ int main(void){
     int **dist = new int*[n+2];
     int *tmp = new int[(n+2)*(m+2)];
     for(i=0;i<n+2;i++) dist[i] = &(tmp[i*(m+2)]);
-
-    int **dist_l = new int*[n+2];
-    int *tmp_l = new int[(n+2)*(m+2)];
-    for(i=0;i<n+2;i++) dist_l[i] = &(tmp_l[i*(m+2)]);
-
-    int **dist_u = new int*[n+2];
-    int *tmp_u = new int[(n+2)*(m+2)];
-    for(i=0;i<n+2;i++) dist_u[i] = &(tmp_u[i*(m+2)]);
-
-    int **dist_d = new int*[n+2];
-    int *tmp_d = new int[(n+2)*(m+2)];
-    for(i=0;i<n+2;i++) dist_d[i] = &(tmp_d[i*(m+2)]);
-
-    int **dist_r = new int*[n+2];
-    int *tmp_r = new int[(n+2)*(m+2)];
-    for(i=0;i<n+2;i++) dist_r[i] = &(tmp_r[i*(m+2)]);
-
+cout<<5;
 
     for(i=0;i<n+2;i++) for(j=0;j<m+2;j++) dist[i][j]=0;
     for(j=1;j<=m;j++) { dist[0][j] = n*m; dist[n+1][j] = n*m; }
@@ -178,89 +164,14 @@ int main(void){
         dist[i][m+1] = n*m;
     }
     data.close();
-
-    for(i=0;i<n+2;i++) {
-        for(j=0;j<m+2;j++) {
-            dist_l[i][j]=dist[i][j];
-            dist_r[i][j]=dist[i][j];
-            dist_u[i][j]=dist[i][j];
-            dist_d[i][j]=dist[i][j];
-        }
-    }
-
+cout<<dist[rx-1][ry]<<endl<<dist[rx+1][ry];
 
      if(dist[rx-1][ry]==m*n && dist[rx+1][ry]==m*n && dist[rx][ry-1]==m*n && dist[rx][ry+1]==m*n){
             ofstream peak("final.path");
             peak << "0" <<endl;
     peak.close();
 		return 0;}
-
-    dist[rx][ry]=0;
-    bfs_table(dist,n,m,rx,ry);
-    dist_l[rx][ry] = n*m;
-    dist_l[rx][ry-1] = 1;
-    dist_u[rx][ry] = n*m;
-    dist_u[rx-1][ry] = 1;
-    dist_d[rx][ry] = n*m;
-    dist_d[rx+1][ry] = 1;
-    dist_r[rx][ry] = n*m;
-    dist_r[rx][ry+1] = 1;
-
-    bfs_table(dist_l,n,m,rx,ry-1);
-    bfs_table(dist_u,n,m,rx-1,ry);
-    bfs_table(dist_d,n,m,rx+1,ry);
-    bfs_table(dist_r,n,m,rx,ry+1);
-
-    /* up to left */
-/**
-      r l u d
-    r 1 1 0 1
-    l 1 1 0 1
-    u 0 0 1 1
-    d 1 1 1 1
-**/
-    vector<int> path_up_to_left, path_left_to_down, path_down_to_right;
-
-    path_up_to_left.push(rx);path_up_to_left.push(ry);
-    if (dist[rx-1][ry] != n*m && dist[rx][ry-1] != n*m) {
-        if (B >= dist_l[rx-1][ry]) { // up->left
-
-        } else if (B >= dist_r[rx-1][ry]) { // up->right
-        } else if (B >= dist_d[rx-1][ry]) {
-        }
-            x = rx-1;
-            y = ry;
-            path_up_to_left.push(x);path_up_to_left.push(y);
-            while(x != rx && y != ry-1) {
-                if (dist_l[x+1][y] < dist_l[x][y]) {x++; path_up_to_left.push(x);path_up_to_left.push(y);}
-                if (dist_l[x-1][y] < dist_l[x][y]) {x--; path_up_to_left.push(x);path_up_to_left.push(y);}
-                if (dist_l[x][y+1] < dist_l[x][y]) {y++; path_up_to_left.push(x);path_up_to_left.push(y);}
-                if (dist_l[x][y-1] < dist_l[x][y]) {y--; path_up_to_left.push(x);path_up_to_left.push(y);}
-            }
-        }
-
-    }
-
-    /* left to down */
-    path_left_to_down.push(rx);path_left_to_down.push(ry);
-    if (dist[rx][ry-1] != n*m && dist[rx+1][ry] != n*m) {
-
-    }
-
-    /* down to right */
-    if (dist[rx+1][ry] != n*m && dist[rx][ry+1] != n*m) {
-
-    }
-
-    for (i = 1; i <= n; ++i) {
-        for (j = 1; j <= m; ++j) {
-            printf("%2d ", dist_l[i][j]);
-        }
-        cout << endl;
-    }
-    return 0;
-
-
+     bfs_table(dist,n,m,rx,ry);
 
     int **visited = new int*[n+2];
     int *tmp1 = new int[(n+2)*(m+2)];
@@ -270,6 +181,9 @@ int main(void){
 			visited[g][h]=false;
 		}
     }
+
+
+    cout<<7;
     while(!s.empty()){
         int x,y;
         x=s.top(); s.pop();
@@ -320,7 +234,7 @@ int main(void){
     }
     stack<int> ss;
 
-
+cout<<8;
     bool finish[6]={!qul.empty(),!qld.empty(),!qdr.empty(),false,false,false};
     //finish ul ld dr ur ud lr
         while(!q.empty()){
@@ -364,73 +278,80 @@ int main(void){
     }
         }
 //ul
+for(i=0;i<qdr1.size();i++){cout<<" "<<qdr1[i].front()<<" ";}
 queue<int> q_ul,q_tmp,q_ud,q_ur,q_ld,q_lr,q_dr;
-        if (finish[0]) { //ul
+cout<< " "<<finish[0]<<" "<<finish[1]<<" "<<finish[2]<<" "<<finish[3]<<" "<<finish[4]<<" "<<finish[5];
+        if(finish[0]==1 && finish[1]==1 && finish[2]==1);
+        else if(finish[0]==0 && finish[1]==0 && finish[2]==0 && finish[3]==0 && finish[4]==0 && finish[5]==0);
+        else{cout<<66;
+        if (finish[0]==1) {//ul
                 q_ul = qul1[0];
 
-        } else if (finish[3] && finish[5]) { //url
+        } else if (finish[3]==1 && finish[5]==1) { //url
                 q_ul = qur1[0];q_tmp = qlr1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
-        } else if (finish[1] && finish[2] && finish[3]) { //urdl
-                q_ul = qur1[0];q_tmp = qdr1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);} q_tmp = qld1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
-        } else if (finish[4] && finish[1]) { //udl
+        } else if (finish[1]==1 && finish[2]==1 && finish[3]==1) { //urdl
+                q_ul = qur1[0];cout<<11;q_tmp = qdr1[1];cout<<22;change(q_tmp);cout<<33;while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}cout<<55; q_tmp = qld1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+        } else if (finish[4]==1 && finish[1]==1) { //udl
                 q_ul = qud1[0];q_tmp = qld1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
-        } else if (finish[2] && finish[4] && finish[5]) { //udrl
+        } else if (finish[2]==1 && finish[4]==1 && finish[5]==1) { //udrl
                 q_ul = qud1[0];q_tmp = qdr1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);} q_tmp = qlr1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
-
+cout<<88;
         }
 //ud
-        if (finish[4]) { //ud
+        if (finish[4]==1) { //ud
                 q_ud = qud1[0];
 
-        } else if (finish[3] && finish[2]) { //urd
+        } else if (finish[3]==1 && finish[2]==1) { //urd
                 q_ud = qur1[0];q_tmp = qdr1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
 
         }
 //ur
-        if (finish[3]) { //ur
+cout<<77;
+        if (finish[3]==1) { //ur
                 q_ur = qur1[0];
         }
 //ld
 
         /**       0  1  2  3  4  5  **/
         /**finish ul ld dr ur ud lr **/
-        if (finish[1]) {
+        if (finish[1]==1) {
                 q_ld = qld1[0];
-        } else if (finish[2] && finish[5]) { //lrd
+        } else if (finish[2]==1 && finish[5]==1) { //lrd
                 q_ld = qlr1[0];q_tmp = qdr1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
 
-        } else if (finish[0] && finish[3] && finish[2]) { //lurd
+        } else if (finish[0]==1 && finish[3]==1 && finish[2]==1) { //lurd
                 q_ld = qul1[0];change(q_ld);q_tmp = qur1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);} q_tmp = qdr1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
 
-        } else if (finish[0] && finish[4]) { //lud
+        } else if (finish[0]==1 && finish[4]==1) { //lud
                 q_ld = qul1[0];change(q_ld);q_tmp = qud1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
 
-        } else if (finish[5] && finish[3] && finish[4]) { //lrud
+        } else if (finish[5]==1 && finish[3]==1 && finish[4]==1) { //lrud
                 q_ld = qlr1[0];q_tmp = qur1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);} q_tmp = qud1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
 
         }
 //lr
-        if (finish[5]) { //lr
+cout<<55;
+        if (finish[5]==1) { //lr
                 q_lr = qlr1[0];
-        } else if (finish[0] && finish[3]) { //lur
+        } else if (finish[0]==1 && finish[3]==1) { //lur
                 q_lr = qul1[0];change(q_ld);q_tmp = qur1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
 
         }
 //dr
         /**       0  1  2  3  4  5  **/
         /**finish ul ld dr ur ud lr **/
-        if (finish[2]) {
+        if (finish[2]==1) {
                 q_dr = qdr1[0];
-        } else if (finish[4] && finish[3]) { //dur
+        } else if (finish[4]==1 && finish[3]==1) { //dur
                 q_dr = qud1[0];change(q_dr);q_tmp = qur1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
 
-        } else if (finish[4] && finish[0] && finish[5]) { //dulr
+        } else if (finish[4]==1 && finish[0]==1 && finish[5]==1) { //dulr
                 q_dr = qud1[0];change(q_dr);q_tmp = qul1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);} q_tmp = qlr1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
 
-        } else if (finish[1] && finish[5]) { //dlr
+        } else if (finish[1]==1 && finish[5]==1) { //dlr
                 q_dr = qld1[0];change(q_dr);q_tmp = qlr1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
 
-        } else if (finish[1] && finish[0] && finish[3]) { //dlur
+        } else if (finish[1]==1 && finish[0]==1 && finish[3]==1) { //dlur
                 q_dr = qld1[0];change(q_dr);q_tmp = qul1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);} q_tmp = qur1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
 
         }
@@ -444,20 +365,24 @@ queue<int> q_ul,q_tmp,q_ud,q_ur,q_ld,q_lr,q_dr;
             //while(v2[i].size()!=2){int t=v2[i].front();v2[i].pop();cout<<t<<" ";t=v2[i].front();v2[i].pop();cout<<t<<endl;}
             //v2[i].pop();v2[i].pop();
     //}
+        }
+        cout<<" ???";
         for(int i=0;i<qU.size();i++){//UU
         //if(i==0){sU[i].pop();sU[i].pop();}
         while(!sU[i].empty()){int t=sU[i].top();sU[i].pop();point.push(t);co++;t=sU[i].top();sU[i].pop();point.push(t);}
         while(qU[i].size()!=2){int t=qU[i].front();qU[i].pop();point.push(t);co++;t=qU[i].front();qU[i].pop();point.push(t);}
         qU[i].pop();qU[i].pop();
     }
+    cout<<123;
 
         for(int i=0;i<qur.size();i++){while(!qur[i].empty()){int t1=qur[i].front();qur[i].pop();point.push(t1);co++;int t2=qur[i].front();qur[i].pop();point.push(t2);ss.push(t2);ss.push(t1);}ss.pop();ss.pop();while(ss.size()!=2){int t=ss.top();ss.pop();point.push(t);co++;t=ss.top();ss.pop();point.push(t);}ss.pop();ss.pop();} //RIGHT
         for(int i=0;i<qud.size();i++){while(!qud[i].empty()){int t1=qud[i].front();qud[i].pop();point.push(t1);co++;int t2=qud[i].front();qud[i].pop();point.push(t2);ss.push(t2);ss.push(t1);}ss.pop();ss.pop();while(ss.size()!=2){int t=ss.top();ss.pop();point.push(t);co++;t=ss.top();ss.pop();point.push(t);}ss.pop();ss.pop();} //LEFT
-
-        if(!qul.empty()){for(int i=0;i<qul.size();i++){while(qul[i].size()!=2){int t1=qul[i].front();qul[i].pop();point.push(t1);co++;int t2=qul[i].front();qul[i].pop();point.push(t2);} }}//LEFT
-        else if(dist[rx][ry-1]!=1 && dist[rx+1][ry]!=1){while(q_ur.size()!=2){int t1=q_ur.front();q_ur.pop();point.push(t1);co++;int t2=q_ur.front();q_ur.pop();point.push(t2);}}
-        else if(dist[rx][ry-1]!=1){while(q_ud.size()!=2){int t1=q_ud.front();q_ud.pop();point.push(t1);co++;int t2=q_ud.front();q_ud.pop();point.push(t2);}}
-        else {while(q_ul.size()!=2){int t1=q_ul.front();q_ul.pop();point.push(t1);co++;int t2=q_ul.front();q_ul.pop();point.push(t2);}}
+cout<<123;
+        if(dist[rx][ry-1]!=1 && dist[rx][ry+1]!=1 && dist[rx+1][ry]!=1 ) return 0;
+        else if(!qul.empty()){for(int i=0;i<qul.size();i++){while(qul[i].size()!=2){int t1=qul[i].front();qul[i].pop();point.push(t1);co++;int t2=qul[i].front();qul[i].pop();point.push(t2);} }}//LEFT
+        else if(dist[rx][ry-1]!=1 && dist[rx+1][ry]!=1){if(!q_ur.empty())while(q_ur.size()!=2){int t1=q_ur.front();q_ur.pop();point.push(t1);co++;int t2=q_ur.front();q_ur.pop();point.push(t2);}}
+        else if(dist[rx][ry-1]!=1){if(!q_ud.empty())while(q_ud.size()!=2){int t1=q_ud.front();q_ud.pop();point.push(t1);co++;int t2=q_ud.front();q_ud.pop();point.push(t2);}}
+        else {if(!q_ul.empty())while(q_ul.size()!=2){int t1=q_ul.front();q_ul.pop();point.push(t1);co++;int t2=q_ul.front();q_ul.pop();point.push(t2);}}
 
         for(int i=0;i<qL.size();i++){//LL
         while(!sL[i].empty()){int t=sL[i].top();sL[i].pop();point.push(t);co++;t=sL[i].top();sL[i].pop();point.push(t);}
@@ -468,8 +393,8 @@ queue<int> q_ul,q_tmp,q_ud,q_ur,q_ld,q_lr,q_dr;
         for(int i=0;i<qlr.size();i++){while(!qlr[i].empty()){int t1=qlr[i].front();qlr[i].pop();point.push(t1);co++;int t2=qlr[i].front();qlr[i].pop();point.push(t2);ss.push(t2);ss.push(t1);}ss.pop();ss.pop();while(ss.size()!=2){int t=ss.top();ss.pop();point.push(t);co++;t=ss.top();ss.pop();point.push(t);}ss.pop();ss.pop();} //LEFT
 
         if(!qld.empty()){for(int i=0;i<qld.size();i++){while(qld[i].size()!=2){int t1=qld[i].front();qld[i].pop();point.push(t1);co++;int t2=qld[i].front();qld[i].pop();point.push(t2);}}}
-        else if(dist[rx+1][ry]!=1){while(q_lr.size()!=2){int t1=q_lr.front();q_lr.pop();point.push(t1);co++;int t2=q_lr.front();q_lr.pop();point.push(t2);}}
-        else {while(q_ld.size()!=2){int t1=q_ld.front();q_ld.pop();point.push(t1);co++;int t2=q_ld.front();q_ld.pop();point.push(t2);}}
+        else if(dist[rx+1][ry]!=1){if(!q_lr.empty())while(q_lr.size()!=2){int t1=q_lr.front();q_lr.pop();point.push(t1);co++;int t2=q_lr.front();q_lr.pop();point.push(t2);}}
+        else {if(!q_ld.empty())while(q_ld.size()!=2){int t1=q_ld.front();q_ld.pop();point.push(t1);co++;int t2=q_ld.front();q_ld.pop();point.push(t2);}}
         		//if(dist[rx][ry+1]!=1 && dist[rx+1][ry]!=1){while(!td2.empty()){point.push(td2.front());co++;td2.pop();point.push(td2.front());td2.pop();}}
                 //else if(dist[rx][ry+1]!=1){while(!td1.empty()){point.push(td1.front());co++;td1.pop();point.push(td1.front());td1.pop();}}
                 //else{while(!tr.empty()){point.push(tr.front());co++;tr.pop();point.push(tr.front());tr.pop();}}
@@ -479,8 +404,8 @@ queue<int> q_ul,q_tmp,q_ud,q_ur,q_ld,q_lr,q_dr;
         qD[i].pop();qD[i].pop();
     }
 
-        if(!qld.empty()){for(int i=0;i<qdr.size();i++){while(!qdr[i].empty()){int t1=qdr[i].front();qdr[i].pop();point.push(t1);co++;int t2=qdr[i].front();qdr[i].pop();point.push(t2);}}} //RIGHT
-        else {while(q_dr.size()!=2){int t1=q_dr.front();q_dr.pop();point.push(t1);co++;int t2=q_dr.front();q_dr.pop();point.push(t2);}}
+        if(!qld.empty()){for(int i=0;i<qdr.size();i++){while(qdr[i].size()!=2){int t1=qdr[i].front();qdr[i].pop();point.push(t1);co++;int t2=qdr[i].front();qdr[i].pop();point.push(t2);}}} //RIGHT
+        else {if(!q_dr.empty())while(q_dr.size()!=2){int t1=q_dr.front();q_dr.pop();point.push(t1);co++;int t2=q_dr.front();q_dr.pop();point.push(t2);}}
 
 
         for(int i=0;i<qR.size();i++){//RR
