@@ -82,8 +82,7 @@ void serch4(int **dist,int x,int y,queue<int> &qi,stack<int> &sl){
 
 }
 
-
-void bfs_table(int **dist,int n,int m,int x,int y){
+void bfs_table(int **dist,int n,int m,int x,int y){ // target = 'd', 'u', 'r', 'l'
     int **visit = new int*[n+2];
     int *tmp = new int[(n+2)*(m+2)];
     for(int i=1;i<=n;i++) visit[i] = &(tmp[i*(m+2)]);
@@ -134,6 +133,9 @@ stack<int> tmpr,tmpc;
 		}
 	}
 }*/
+
+
+
 int main(void){
     int i,j,B,co=0;
     int n,m,rx,ry;
@@ -145,6 +147,24 @@ int main(void){
     int **dist = new int*[n+2];
     int *tmp = new int[(n+2)*(m+2)];
     for(i=0;i<n+2;i++) dist[i] = &(tmp[i*(m+2)]);
+
+    int **dist_l = new int*[n+2];
+    int *tmp_l = new int[(n+2)*(m+2)];
+    for(i=0;i<n+2;i++) dist_l[i] = &(tmp_l[i*(m+2)]);
+
+    int **dist_u = new int*[n+2];
+    int *tmp_u = new int[(n+2)*(m+2)];
+    for(i=0;i<n+2;i++) dist_u[i] = &(tmp_u[i*(m+2)]);
+
+    int **dist_d = new int*[n+2];
+    int *tmp_d = new int[(n+2)*(m+2)];
+    for(i=0;i<n+2;i++) dist_d[i] = &(tmp_d[i*(m+2)]);
+
+    int **dist_r = new int*[n+2];
+    int *tmp_r = new int[(n+2)*(m+2)];
+    for(i=0;i<n+2;i++) dist_r[i] = &(tmp_r[i*(m+2)]);
+
+
     for(i=0;i<n+2;i++) for(j=0;j<m+2;j++) dist[i][j]=0;
     for(j=1;j<=m;j++) { dist[0][j] = n*m; dist[n+1][j] = n*m; }
     for(i=1;i<=n;i++) {
@@ -152,12 +172,22 @@ int main(void){
         for(j=1;j<=m;j++){
             data>>c;
             if(c=='1') dist[i][j]=m*n;
-            else if(c=='R'){dist[i][j]=m*n;rx=i;ry=j;}
+            else if(c=='R'){dist[i][j]=0;rx=i;ry=j;}
             else dist[i][j]=0;
         }
         dist[i][m+1] = n*m;
     }
     data.close();
+
+    for(i=0;i<n+2;i++) {
+        for(j=0;j<m+2;j++) {
+            dist_l[i][j]=dist[i][j];
+            dist_r[i][j]=dist[i][j];
+            dist_u[i][j]=dist[i][j];
+            dist_d[i][j]=dist[i][j];
+        }
+    }
+
 
      if(dist[rx-1][ry]==m*n && dist[rx+1][ry]==m*n && dist[rx][ry-1]==m*n && dist[rx][ry+1]==m*n){
             ofstream peak("final.path");
@@ -165,10 +195,72 @@ int main(void){
     peak.close();
 		return 0;}
 
-
-
     dist[rx][ry]=0;
     bfs_table(dist,n,m,rx,ry);
+    dist_l[rx][ry] = n*m;
+    dist_l[rx][ry-1] = 1;
+    dist_u[rx][ry] = n*m;
+    dist_u[rx-1][ry] = 1;
+    dist_d[rx][ry] = n*m;
+    dist_d[rx+1][ry] = 1;
+    dist_r[rx][ry] = n*m;
+    dist_r[rx][ry+1] = 1;
+
+    bfs_table(dist_l,n,m,rx,ry-1);
+    bfs_table(dist_u,n,m,rx-1,ry);
+    bfs_table(dist_d,n,m,rx+1,ry);
+    bfs_table(dist_r,n,m,rx,ry+1);
+
+    /* up to left */
+/**
+      r l u d
+    r 1 1 0 1
+    l 1 1 0 1
+    u 0 0 1 1
+    d 1 1 1 1
+**/
+    vector<int> path_up_to_left, path_left_to_down, path_down_to_right;
+
+    path_up_to_left.push(rx);path_up_to_left.push(ry);
+    if (dist[rx-1][ry] != n*m && dist[rx][ry-1] != n*m) {
+        if (B >= dist_l[rx-1][ry]) { // up->left
+
+        } else if (B >= dist_r[rx-1][ry]) { // up->right
+        } else if (B >= dist_d[rx-1][ry]) {
+        }
+            x = rx-1;
+            y = ry;
+            path_up_to_left.push(x);path_up_to_left.push(y);
+            while(x != rx && y != ry-1) {
+                if (dist_l[x+1][y] < dist_l[x][y]) {x++; path_up_to_left.push(x);path_up_to_left.push(y);}
+                if (dist_l[x-1][y] < dist_l[x][y]) {x--; path_up_to_left.push(x);path_up_to_left.push(y);}
+                if (dist_l[x][y+1] < dist_l[x][y]) {y++; path_up_to_left.push(x);path_up_to_left.push(y);}
+                if (dist_l[x][y-1] < dist_l[x][y]) {y--; path_up_to_left.push(x);path_up_to_left.push(y);}
+            }
+        }
+
+    }
+
+    /* left to down */
+    path_left_to_down.push(rx);path_left_to_down.push(ry);
+    if (dist[rx][ry-1] != n*m && dist[rx+1][ry] != n*m) {
+
+    }
+
+    /* down to right */
+    if (dist[rx+1][ry] != n*m && dist[rx][ry+1] != n*m) {
+
+    }
+
+    for (i = 1; i <= n; ++i) {
+        for (j = 1; j <= m; ++j) {
+            printf("%2d ", dist_l[i][j]);
+        }
+        cout << endl;
+    }
+    return 0;
+
+
 
     int **visited = new int*[n+2];
     int *tmp1 = new int[(n+2)*(m+2)];
@@ -271,7 +363,79 @@ int main(void){
 
     }
         }
-    //while(!qur.empty()){for(int i=qur.size()-1;i>=0;i--){change2(qur[i],rx,ry);qU.push_back(qc2);while(!qc2.empty()){qc2.pop();}}}
+//ul
+queue<int> q_ul,q_tmp,q_ud,q_ur,q_ld,q_lr,q_dr;
+        if (finish[0]) { //ul
+                q_ul = qul1[0];
+
+        } else if (finish[3] && finish[5]) { //url
+                q_ul = qur1[0];q_tmp = qlr1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+        } else if (finish[1] && finish[2] && finish[3]) { //urdl
+                q_ul = qur1[0];q_tmp = qdr1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);} q_tmp = qld1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+        } else if (finish[4] && finish[1]) { //udl
+                q_ul = qud1[0];q_tmp = qld1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+        } else if (finish[2] && finish[4] && finish[5]) { //udrl
+                q_ul = qud1[0];q_tmp = qdr1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);} q_tmp = qlr1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+
+        }
+//ud
+        if (finish[4]) { //ud
+                q_ud = qud1[0];
+
+        } else if (finish[3] && finish[2]) { //urd
+                q_ud = qur1[0];q_tmp = qdr1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+
+        }
+//ur
+        if (finish[3]) { //ur
+                q_ur = qur1[0];
+        }
+//ld
+
+        /**       0  1  2  3  4  5  **/
+        /**finish ul ld dr ur ud lr **/
+        if (finish[1]) {
+                q_ld = qld1[0];
+        } else if (finish[2] && finish[5]) { //lrd
+                q_ld = qlr1[0];q_tmp = qdr1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+
+        } else if (finish[0] && finish[3] && finish[2]) { //lurd
+                q_ld = qul1[0];change(q_ld);q_tmp = qur1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);} q_tmp = qdr1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+
+        } else if (finish[0] && finish[4]) { //lud
+                q_ld = qul1[0];change(q_ld);q_tmp = qud1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+
+        } else if (finish[5] && finish[3] && finish[4]) { //lrud
+                q_ld = qlr1[0];q_tmp = qur1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);} q_tmp = qud1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+
+        }
+//lr
+        if (finish[5]) { //lr
+                q_lr = qlr1[0];
+        } else if (finish[0] && finish[3]) { //lur
+                q_lr = qul1[0];change(q_ld);q_tmp = qur1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+
+        }
+//dr
+        /**       0  1  2  3  4  5  **/
+        /**finish ul ld dr ur ud lr **/
+        if (finish[2]) {
+                q_dr = qdr1[0];
+        } else if (finish[4] && finish[3]) { //dur
+                q_dr = qud1[0];change(q_dr);q_tmp = qur1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+
+        } else if (finish[4] && finish[0] && finish[5]) { //dulr
+                q_dr = qud1[0];change(q_dr);q_tmp = qul1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);} q_tmp = qlr1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+
+        } else if (finish[1] && finish[5]) { //dlr
+                q_dr = qld1[0];change(q_dr);q_tmp = qlr1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+
+        } else if (finish[1] && finish[0] && finish[3]) { //dlur
+                q_dr = qld1[0];change(q_dr);q_tmp = qul1[0];change(q_tmp);while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);} q_tmp = qur1[0];while(!q_tmp.empty()){int w=q_tmp.front();q_tmp.pop();q_ul.push(w);}
+
+        }
+
+    //while(!qur.empty()){for(int i=qur.size()-1;i>=0 ;i--){change2(qur[i],rx,ry);qU.push_back(qc2);while(!qc2.empty()){qc2.pop();}}}
     //for(i=1;i<=n;i++) { for(j=1;j<=m-1;j++) cout<<setw(2)<<dist[i][j]<<" "; cout<<setw(2)<<dist[i][j]<<endl;}
 
     //for(int i=0;i<v1.size();i++){
@@ -289,7 +453,11 @@ int main(void){
 
         for(int i=0;i<qur.size();i++){while(!qur[i].empty()){int t1=qur[i].front();qur[i].pop();point.push(t1);co++;int t2=qur[i].front();qur[i].pop();point.push(t2);ss.push(t2);ss.push(t1);}ss.pop();ss.pop();while(ss.size()!=2){int t=ss.top();ss.pop();point.push(t);co++;t=ss.top();ss.pop();point.push(t);}ss.pop();ss.pop();} //RIGHT
         for(int i=0;i<qud.size();i++){while(!qud[i].empty()){int t1=qud[i].front();qud[i].pop();point.push(t1);co++;int t2=qud[i].front();qud[i].pop();point.push(t2);ss.push(t2);ss.push(t1);}ss.pop();ss.pop();while(ss.size()!=2){int t=ss.top();ss.pop();point.push(t);co++;t=ss.top();ss.pop();point.push(t);}ss.pop();ss.pop();} //LEFT
-        for(int i=0;i<qul.size();i++){while(qul[i].size()!=2){int t1=qul[i].front();qul[i].pop();point.push(t1);co++;int t2=qul[i].front();qul[i].pop();point.push(t2);} }//LEFT
+
+        if(!qul.empty()){for(int i=0;i<qul.size();i++){while(qul[i].size()!=2){int t1=qul[i].front();qul[i].pop();point.push(t1);co++;int t2=qul[i].front();qul[i].pop();point.push(t2);} }}//LEFT
+        else if(dist[rx][ry-1]!=1 && dist[rx+1][ry]!=1){while(q_ur.size()!=2){int t1=q_ur.front();q_ur.pop();point.push(t1);co++;int t2=q_ur.front();q_ur.pop();point.push(t2);}}
+        else if(dist[rx][ry-1]!=1){while(q_ud.size()!=2){int t1=q_ud.front();q_ud.pop();point.push(t1);co++;int t2=q_ud.front();q_ud.pop();point.push(t2);}}
+        else {while(q_ul.size()!=2){int t1=q_ul.front();q_ul.pop();point.push(t1);co++;int t2=q_ul.front();q_ul.pop();point.push(t2);}}
 
         for(int i=0;i<qL.size();i++){//LL
         while(!sL[i].empty()){int t=sL[i].top();sL[i].pop();point.push(t);co++;t=sL[i].top();sL[i].pop();point.push(t);}
@@ -298,7 +466,10 @@ int main(void){
     }
 
         for(int i=0;i<qlr.size();i++){while(!qlr[i].empty()){int t1=qlr[i].front();qlr[i].pop();point.push(t1);co++;int t2=qlr[i].front();qlr[i].pop();point.push(t2);ss.push(t2);ss.push(t1);}ss.pop();ss.pop();while(ss.size()!=2){int t=ss.top();ss.pop();point.push(t);co++;t=ss.top();ss.pop();point.push(t);}ss.pop();ss.pop();} //LEFT
-        for(int i=0;i<qld.size();i++){while(qld[i].size()!=2){int t1=qld[i].front();qld[i].pop();point.push(t1);co++;int t2=qld[i].front();qld[i].pop();point.push(t2);}}
+
+        if(!qld.empty()){for(int i=0;i<qld.size();i++){while(qld[i].size()!=2){int t1=qld[i].front();qld[i].pop();point.push(t1);co++;int t2=qld[i].front();qld[i].pop();point.push(t2);}}}
+        else if(dist[rx+1][ry]!=1){while(q_lr.size()!=2){int t1=q_lr.front();q_lr.pop();point.push(t1);co++;int t2=q_lr.front();q_lr.pop();point.push(t2);}}
+        else {while(q_ld.size()!=2){int t1=q_ld.front();q_ld.pop();point.push(t1);co++;int t2=q_ld.front();q_ld.pop();point.push(t2);}}
         		//if(dist[rx][ry+1]!=1 && dist[rx+1][ry]!=1){while(!td2.empty()){point.push(td2.front());co++;td2.pop();point.push(td2.front());td2.pop();}}
                 //else if(dist[rx][ry+1]!=1){while(!td1.empty()){point.push(td1.front());co++;td1.pop();point.push(td1.front());td1.pop();}}
                 //else{while(!tr.empty()){point.push(tr.front());co++;tr.pop();point.push(tr.front());tr.pop();}}
@@ -308,7 +479,8 @@ int main(void){
         qD[i].pop();qD[i].pop();
     }
 
-        for(int i=0;i<qdr.size();i++){while(!qdr[i].empty()){int t1=qdr[i].front();qdr[i].pop();point.push(t1);co++;int t2=qdr[i].front();qdr[i].pop();point.push(t2);}} //RIGHT
+        if(!qld.empty()){for(int i=0;i<qdr.size();i++){while(!qdr[i].empty()){int t1=qdr[i].front();qdr[i].pop();point.push(t1);co++;int t2=qdr[i].front();qdr[i].pop();point.push(t2);}}} //RIGHT
+        else {while(q_dr.size()!=2){int t1=q_dr.front();q_dr.pop();point.push(t1);co++;int t2=q_dr.front();q_dr.pop();point.push(t2);}}
 
 
         for(int i=0;i<qR.size();i++){//RR
